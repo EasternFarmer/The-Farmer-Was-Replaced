@@ -1,3 +1,4 @@
 *.log
 *cache/
 test.py
+*.gitignore
