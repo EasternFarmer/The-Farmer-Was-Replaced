@@ -9,6 +9,9 @@ The Farmer Was Replaced __builtins__ from 16.12.2024
 # -------------------------------------------------------------------------------
 class Items:
     @property
+    def Weird_Substance(self):
+        ...
+    @property
     def Carrot(self):
         """Obtained by harvesting carrots."""
         ...
@@ -372,10 +375,10 @@ class Unlocks:
 
 class Hats:
     @property
-    def Dinosaur_Hat() -> None:
+    def Dinosaur_Hat(self) -> None:
         ...
     @property
-    def Straw_Hat() -> None:
+    def Straw_Hat(self) -> None:
         ...
 
 # -------------------------------------------------------------------------------
