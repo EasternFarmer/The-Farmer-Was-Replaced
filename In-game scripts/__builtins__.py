@@ -87,7 +87,7 @@ class Items:
         ...
 
     @property
-    def Bones(self):
+    def Bone(self):
         """The bones of an ancient creature."""
         ...
 
@@ -125,7 +125,7 @@ class Entities:
         ...
 
     @property
-    def Carrots(self):
+    def Carrot(self):
         """
         Carrots!
 
@@ -190,7 +190,7 @@ class Entities:
 # -------------------------------------------------------------------------------
 class Grounds:
     @property
-    def Turf(self):
+    def Grassland(self):
         """The default ground. Grass will automatically grow on it."""
         ...
 

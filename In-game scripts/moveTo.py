@@ -1,4 +1,3 @@
-#type: ignore
 def moveTo(x_or_tuple = None, y = None):
     if x_or_tuple == None and y == None:
         x = 0
@@ -19,3 +18,6 @@ def moveTo(x_or_tuple = None, y = None):
             move(North)
         else:
             move(South)
+
+def get_location():
+	return (get_pos_x(), get_pos_y())
