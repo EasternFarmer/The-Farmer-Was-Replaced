@@ -1,4 +1,3 @@
-from moveTo import moveTo
 amount = get_world_size()*num_unlocked(Unlocks.Mazes)
 def moveMaze(LM):
 	# LM is short for lastmovement, i changed it for better readability
