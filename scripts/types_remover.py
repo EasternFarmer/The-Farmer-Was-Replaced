@@ -1,17 +1,13 @@
-def remove_types(path: str, return_str: bool = False) -> None | str:
+def remove_types(path: str, *, return_str: bool = False) -> None | str:
     with open(path) as f:
         file = [line.rstrip('\n') for line in f.readlines()]
 
     # in_string: bool = False
     dict_deep: int = 0
 
-    def zfunction(arg1: str, arg2: int) -> None:
-        return
-
     new_file: list[str] = []
     dict_line = ''
     for line in file:
-        
         if 'import' in line:
             new_file.append(line)
             continue
@@ -20,6 +16,9 @@ def remove_types(path: str, return_str: bool = False) -> None | str:
             dict_deep += 1
 
         try:
+            if line.split()[0][0] == '#':
+                new_file.append(line)
+                continue
             match line.split()[0]:
                 case 'def':
                     spaces: int = len(line)-len(line.lstrip())
@@ -67,4 +66,4 @@ def remove_types(path: str, return_str: bool = False) -> None | str:
         f.writelines('\n'.join(new_file))
     return None
 
-remove_types(r'C:\Users\user\Desktop\Git\tfwr-logger\Not In-game scripts\input.txt')
+remove_types(r'C:\Users\user\Desktop\Git\tfwr-logger\Not In-game scripts\input.py')
