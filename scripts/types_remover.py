@@ -45,13 +45,13 @@ def remove_types(path: str, *, return_str: bool = False, output_file: str = 'out
             match line.split()[0]:
                 case 'def':
                     if tuple_deep == 0:
-                        args2 = []
-                        spaces = len(line)-len(line.lstrip())
-                        args = re.findall(r"\b(\w+):\s", line)
-                        arg_values = re.findall(r'=\s([a-zA-Z0-9\'\"\.]+)', line)
-                        function_name = line[line.index('def')+4:line.index('(')].strip()
+                        args2: list[str] = []
+                        spaces: int = len(line)-len(line.lstrip())
+                        args: list[str] = re.findall(r"\b(\w+):\s", line)
+                        arg_values: list[str | None] = re.findall(r'=\s([a-zA-Z0-9\'\"\.]+)', line)
+                        function_name: str = line[line.index('def')+4:line.index('(')].strip()
                         for i in range(len(args)-len(arg_values)): arg_values.insert(0, None)
-                        for i in range(len(args)): args2.append(' = '.join([args[i], arg_values[i]]) if arg_values[i] is not None else args[i])
+                        for i in range(len(args)): args2.append(' = '.join([args[i], arg_values[i]]) if arg_values[i] is not None else args[i]) #type: ignore
                         new_file.append(f'{' '*spaces}def {function_name}({', '.join(args2)}):')
                     else:
                         tuple_line += line
@@ -112,7 +112,7 @@ def remove_types(path: str, *, return_str: bool = False, output_file: str = 'out
                 arg_values = re.findall(r'=\s([a-zA-Z0-9\'\"\.]+)', line)
                 function_name = line[line.index('def')+4:line.index('(')].strip()
                 for i in range(len(args)-len(arg_values)): arg_values.insert(0, None)
-                for i in range(len(args)): args2.append(' = '.join([args[i], arg_values[i]]) if arg_values[i] is not None else args[i])
+                for i in range(len(args)): args2.append(' = '.join([args[i], arg_values[i]]) if arg_values[i] is not None else args[i]) #type: ignore
                 new_file.append(f'{' '*spaces}def {function_name}({', '.join(args2)}):')
                 tuple_line = ''
                 tuple_is_func = False
