@@ -7,4 +7,4 @@
 2. I was inspired by Pesinario (member of the official Tfwr discord server) and [his repository](https://github.com/Pesinario/The-Farmer-Was-Replaced/)
 
 ## About branches.
-* The only branch viable for normal usage is `main`. Rest (for now only `scripts`) are for debbuging / testing
+* The only branch viable for normal usage is `main`. Rest (for now only `dev`) are for debbuging / testing

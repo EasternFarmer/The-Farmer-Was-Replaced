@@ -1,3 +1,7 @@
+"""
+I just wanted to say that the idea for caching output.txt from Tfwr i got Pesinario (@pesinario on discord, https://github.com/Pesinario/The-Farmer-Was-Replaced/)
+"""
+
 import logging
 import threading
 from time import sleep

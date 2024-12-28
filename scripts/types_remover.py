@@ -48,6 +48,11 @@ def remove_types(path: str, *, return_str: bool = False, output_file: str = 'out
                         args: list[list[str]] = [lst.split(':') for lst in ''.join(line[line.index('(')+1 : line.index(')')].split(' ')).split(',')]
                         function_name: str = line[line.index('def')+4:line.index('(')]
                         for i in range(len(args)):
+                            if args == [['']]:
+                                args2 = ['']
+                                break
+                            if len(args[i]) == 1:
+                                args[i].append('')
                             args[i][1] = args[i][1].split('=')[1] if '=' in args[i][1] else None #type: ignore
                             args2.append(' = '.join(args[i]) if args[i][1] is not None else args[i][0])
                         new_file.append(f'{' '*spaces}def {function_name}({', '.join(args2)}):')
@@ -109,6 +114,9 @@ def remove_types(path: str, *, return_str: bool = False, output_file: str = 'out
                 args = [lst.split(':') for lst in ''.join(tuple_line[tuple_line.index('(')+1 : tuple_line.index(')')].split(' ')).split(',')]
                 function_name = tuple_line[tuple_line.index('def')+4:tuple_line.index('(')]
                 for i in range(len(args)):
+                    if args == [['']]:
+                        args2 = ['']
+                        break
                     if len(args[i]) == 1:
                         args[i].append('')
                     args[i][1] = args[i][1].split('=')[1] if '=' in args[i][1] else None #type: ignore
