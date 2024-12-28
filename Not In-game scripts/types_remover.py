@@ -1,21 +1,13 @@
-from typing import Final
-
 def remove_types(path: str, return_str: bool = False) -> None | str:
-    INPUT_PATH: Final[str] = path
-
-    with open(INPUT_PATH) as f:
+    with open(path) as f:
         file = [line.rstrip('\n') for line in f.readlines()]
 
     # in_string: bool = False
     dict_deep: int = 0
 
-    def zfunction(arg1: str, arg2: int) -> None:
-        return
-
     new_file: list[str] = []
     dict_line = ''
     for line in file:
-        
         if 'import' in line:
             new_file.append(line)
             continue
