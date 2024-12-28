@@ -44,12 +44,12 @@ def main() -> None:
     input('exit? ')
 
 def reader():
-    while True:
+    while not exit_var:
         read()
-        list_of_lines_ = list_of_lines.copy()
+        _list_of_lines = list_of_lines.copy()
         for line in old_list_of_lines:
-            list_of_lines_.remove(line)
-        for line in list_of_lines_:
+            _list_of_lines.remove(line)
+        for line in _list_of_lines:
             match line[:3].lower():
                 case 'd: ':
                     debug(line[3:])
@@ -61,7 +61,6 @@ def reader():
                     crit(line[3:])
                 case _:
                     warn(line)
-        if exit_var == True: break
         sleep(2)
         
 try:
