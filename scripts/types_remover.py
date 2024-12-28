@@ -1,3 +1,24 @@
+"""
+Types that include "," in the declaration like Callable[[int, int], int] in function argument definitions don't work!
+
+def a(A: Callable[[int, int], int]) -> None:
+    pass
+def b() -> Callable[[int, int], int]:
+    pass 
+def c(A: tuple[int,int]):
+    Aa: Callable[[int, int], int] = ...
+
+    |
+    v
+
+def a(A, int], int]):
+    pass
+def b():
+    pass 
+def c(A, int]):
+    Aa = ...
+"""
+
 def parse_line(line: str) -> str | bool:
     if '\n' in line:
         line = ''.join(line.split('\n'))
@@ -136,4 +157,5 @@ def remove_types(path: str, *, return_str: bool = False, output_file: str = 'out
         f.writelines('\n'.join(new_file))
     return None
 
-remove_types(r'C:\Users\user\Desktop\Git\The-Farmer-Was-Replaced\scripts\input.py')
+if __name__ == '__main__':
+    remove_types(r'C:\Users\user\Desktop\Git\The-Farmer-Was-Replaced\scripts\input.py')
