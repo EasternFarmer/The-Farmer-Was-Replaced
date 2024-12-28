@@ -1,5 +1,5 @@
 *.log
 *cache/
 test.py
-tools_no_tfwr.py
-__builtins__.py
+output.py
+input.py
