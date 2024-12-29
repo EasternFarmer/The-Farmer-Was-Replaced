@@ -11,11 +11,28 @@ def parse_line(line: str) -> str | bool:
         return f'{' '*spaces}{variable_name} = {value}' #type: ignore
     return False
 
+def parse_def_statement(line: str) -> str:
+    args2: list[str] = []
+    spaces: int = len(line)-len(line.lstrip())
+    raw_args: list[tuple[str, ...]] = re.findall(r'\b([a-zA-Z0-9_*]+):\s|,\s([a-zA-Z0-9_*]+),|,\s([a-zA-Z0-9_*]+)\)', line)
+    args = []
+    try:
+        for i in range(len(raw_args)): 
+            for j in range(len(raw_args[0])):
+                if raw_args[i][j] != '':
+                    args.append(raw_args[i][j].rstrip(','))
+    except IndexError:
+        args = ['']
+    arg_values: list[str | None] = re.findall(r'=\s([a-zA-Z0-9\'\"\.]+)', line)
+    function_name: str = line[line.index('def')+4:line.index('(')].strip()
+    for i in range(len(args)-len(arg_values)): arg_values.insert(0, None)
+    for i in range(len(args)): args2.append(' = '.join([args[i], arg_values[i]]) if arg_values[i] is not None else args[i]) #type: ignore
+    return f'{' '*spaces}def {function_name}({', '.join(args2)}):'
+
 def remove_types(path: str, *, return_str: bool = False, output_file: str = 'output.py') -> None | str:
     with open(path) as f:
         file = [line.rstrip('\n') for line in f.readlines()]
 
-    # in_string: bool = False
     dict_deep: int = 0
     list_deep: int = 0
     tuple_deep: int = 0
@@ -30,7 +47,8 @@ def remove_types(path: str, *, return_str: bool = False, output_file: str = 'out
         if 'import' in line:
             new_file.append(line)
             continue
-
+        if (dict_deep + list_deep + tuple_deep) < 0:
+            dict_deep, list_deep, tuple_deep = 0,0,0
         if (line.count('{') - line.count(repr('{'))) > (line.count('}') - line.count(repr('}'))):
             dict_deep += 1
         if (line.count('[') - line.count(repr('['))) > (line.count(']') - line.count(repr(']'))):
@@ -45,14 +63,7 @@ def remove_types(path: str, *, return_str: bool = False, output_file: str = 'out
             match line.split()[0]:
                 case 'def':
                     if tuple_deep == 0:
-                        args2: list[str] = []
-                        spaces: int = len(line)-len(line.lstrip())
-                        args: list[str] = re.findall(r"\b(\w+):\s", line)
-                        arg_values: list[str | None] = re.findall(r'=\s([a-zA-Z0-9\'\"\.]+)', line)
-                        function_name: str = line[line.index('def')+4:line.index('(')].strip()
-                        for i in range(len(args)-len(arg_values)): arg_values.insert(0, None)
-                        for i in range(len(args)): args2.append(' = '.join([args[i], arg_values[i]]) if arg_values[i] is not None else args[i]) #type: ignore
-                        new_file.append(f'{' '*spaces}def {function_name}({', '.join(args2)}):')
+                        new_file.append(parse_def_statement(line))
                     else:
                         tuple_line += line
                         tuple_is_func = True
@@ -67,6 +78,8 @@ def remove_types(path: str, *, return_str: bool = False, output_file: str = 'out
                         else:
                             operator = '='
                         variable_name = line[0:line.lstrip().index(' ')+ len(line) - len(line.lstrip())].rstrip(':')
+                        if variable_name[-1] == ',':
+                            variable_name = line[0:line.lstrip().index('=')+ len(line) - len(line.lstrip())].split(':')[0]
                         lst = line.split('=')
                         value = lst[1] if len(lst) == 2 else None
                         if value != None:
@@ -86,6 +99,9 @@ def remove_types(path: str, *, return_str: bool = False, output_file: str = 'out
                         tuple_line += line
                     elif list_deep > dict_deep and list_deep > tuple_deep:
                         list_line += line
+                    elif (dict_deep + list_deep + tuple_deep) < 0:
+                        dict_deep, list_deep, tuple_deep = 0,0,0
+                        new_file.append(line)
         except IndexError:
             new_file.append(line)
         if line.count('{') < line.count('}'):
@@ -106,14 +122,7 @@ def remove_types(path: str, *, return_str: bool = False, output_file: str = 'out
             tuple_deep -= 1
             if tuple_line != '' and tuple_deep == 0 and tuple_is_func:
                 tuple_line = ''.join(tuple_line.split('\n'))
-                args2 = []
-                spaces = len(line)-len(line.lstrip())
-                args = re.findall(r"\b(\w+):\s", line)
-                arg_values = re.findall(r'=\s([a-zA-Z0-9\'\"\.]+)', line)
-                function_name = line[line.index('def')+4:line.index('(')].strip()
-                for i in range(len(args)-len(arg_values)): arg_values.insert(0, None)
-                for i in range(len(args)): args2.append(' = '.join([args[i], arg_values[i]]) if arg_values[i] is not None else args[i]) #type: ignore
-                new_file.append(f'{' '*spaces}def {function_name}({', '.join(args2)}):')
+                new_file.append(parse_def_statement(tuple_line))
                 tuple_line = ''
                 tuple_is_func = False
             elif tuple_line != '' and tuple_deep == 0:
