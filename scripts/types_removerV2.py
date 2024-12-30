@@ -2,6 +2,7 @@
 My take 2 at this problem. But this time i'm using ast module/library . Check: https://docs.python.org/3/library/ast
 
 Turns out this method is on average 3,28 (average from 100 calls) times slower than /scripts/types_remover.py and removes comments (not doc strings)
+It for sure has less / None bugs tho
 """
 import ast
 

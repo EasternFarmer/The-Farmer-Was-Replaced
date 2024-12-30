@@ -14,7 +14,7 @@ def parse_line(line: str) -> str | bool:
 def parse_def_statement(line: str) -> str:
     args2: list[str] = []
     spaces: int = len(line)-len(line.lstrip())
-    raw_args: list[tuple[str, ...]] = re.findall(r'\b([a-zA-Z0-9_*]+):\s|,\s([a-zA-Z0-9_*]+),|,\s([a-zA-Z0-9_*]+)\)', line)
+    raw_args: list[tuple[str, ...]] = re.findall(r'\b([a-zA-Z0-9_*]+):\s\w+|[,(]\s*([a-zA-Z0-9_*]+)\s*[,=]|,\s*([a-zA-Z0-9_*]+)\)', line)
     args = []
     try:
         for i in range(len(raw_args)): 
@@ -23,10 +23,14 @@ def parse_def_statement(line: str) -> str:
                     args.append(raw_args[i][j].rstrip(','))
     except IndexError:
         args = ['']
-    arg_values: list[str | None] = re.findall(r'=\s([a-zA-Z0-9\'\"\.]+)', line)
+    arg_values: list[str | None] = re.findall(r'=\s*([a-zA-Z0-9\'\"\.]+|\(\)|\[\]|\{\})', line)
     function_name: str = line[line.index('def')+4:line.index('(')].strip()
-    for i in range(len(args)-len(arg_values)): arg_values.insert(0, None)
-    for i in range(len(args)): args2.append(' = '.join([args[i], arg_values[i]]) if arg_values[i] is not None else args[i]) #type: ignore
+    for i in range((len(args)-len(arg_values)) if '*' not in args else (len(args)-len(arg_values) - 1)):
+        arg_values.insert(0, None)
+    if '*' in args:
+        arg_values.insert(-(len(args) - args.index('*')-1), None)
+    for i in range(len(args)):
+        args2.append(' = '.join([args[i], arg_values[i]]) if arg_values[i] is not None else args[i]) #type: ignore
     return f'{' '*spaces}def {function_name}({', '.join(args2)}):'
 
 def remove_types(path: str, *, return_str: bool = False, output_file: str = 'output.py') -> None | str:
@@ -92,6 +96,8 @@ def remove_types(path: str, *, return_str: bool = False, output_file: str = 'out
                         list_line += line
                 case _:
                     if (dict_deep + list_deep + tuple_deep) == 0:
+                        if line.count(':') == 1 and line.count('=') == 0 and line.count(' ') == 1:
+                            continue
                         new_file.append(line)
                     elif dict_deep > list_deep and dict_deep > tuple_deep:
                         dict_line += line
